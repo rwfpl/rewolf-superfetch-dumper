@@ -43,7 +43,7 @@ struct PfFileHeader
 	DWORD fileType;					// index to PfFileParams table
 	PfFileParams fileParams;		// 9 dwords
 	DWORD volumesCounter;			// number of volumes in file
-	DWORD totalENtriesInVolumes;	// ??
+	DWORD totalEntriesInVolumes;	// ??
 	//rest of header is unknown at this moment
 };
 
@@ -231,7 +231,7 @@ void dump_T(BYTE* outputBuffer, PfFileHeader* fh)
 void dump(BYTE* outputBuffer, DWORD totalSize)
 {
 	PfFileHeader* fh = (PfFileHeader*)outputBuffer;
-	wprintf(L"magic          : %08X\nfile size      : %08X\nheader size    : %08X\nfile type      : %08X\nvolumes counter: %08X\nunknown        : %08X\n", fh->magic, fh->fileSize, (fh->headerSize + 7) & 0xFFFFFFF8, fh->fileType, fh->volumesCounter, fh->totalENtriesInVolumes);
+	wprintf(L"magic          : %08X\nfile size      : %08X\nheader size    : %08X\nfile type      : %08X\nvolumes counter: %08X\nunknown        : %08X\n", fh->magic, fh->fileSize, (fh->headerSize + 7) & 0xFFFFFFF8, fh->fileType, fh->volumesCounter, fh->totalEntriesInVolumes);
 	
 	for (int i = 0; i < _countof(fh->fileParams.sizes); i++)
 		wprintf(L"\tparam %02X: %08X\n", i, fh->fileParams.sizes[i]);
