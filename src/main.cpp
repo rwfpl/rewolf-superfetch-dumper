@@ -37,13 +37,13 @@ struct PfFileParams
 
 struct PfFileHeader
 {
-	DWORD magic;					// = 0xE; ?
+	DWORD magic;				// = 0xE; ?
 	DWORD fileSize;
-	DWORD headerSize;				// align this value to 8 after read
-	DWORD fileType;					// index to PfFileParams table
+	DWORD headerSize;			// align this value to 8 after read
+	DWORD fileType;				// index to PfDbDatabaseParamsForFileType table
 	PfFileParams fileParams;		// 9 dwords
 	DWORD volumesCounter;			// number of volumes in file
-	DWORD totalEntriesInVolumes;	// ??
+	DWORD totalEntriesInVolumes;		// ??
 	//rest of header is unknown at this moment
 };
 
@@ -171,6 +171,13 @@ int hashStr(wchar_t* str, int strLen)
 	return curVal;
 }
 
+void printTimestamp(FILETIME& tmstp)
+{
+	SYSTEMTIME st = { 0 };
+	FileTimeToSystemTime(&tmstp, &st);
+	wprintf(L"Timestamp: %04d-%02d-%02d, %02d:%02d:%02d (%d)\n", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
+}
+
 template <class T, class U, int align>
 void dump_T(BYTE* outputBuffer, PfFileHeader* fh)
 {
@@ -186,6 +193,8 @@ void dump_T(BYTE* outputBuffer, PfFileHeader* fh)
 		int str_len = 0;
 		while (vol_name[str_len++]);
 		wprintf(L"Volume: (%08X) (%08X) %s\n", hashStr(vol_name, str_len - 1), str_len - 1, vol_name);
+		wprintf(L"Volume ID: %04X-%04X\n", vh->volumeID >> 16, vh->volumeID & 0xFFFF);
+		printTimestamp(vh->timestamp);
 		for (DWORD x = 0; x < sizeof(T)/4; x++)
 			wprintf(L"%08X ", *(DWORD*)(outputBuffer + crPtr + x*4));
 		wprintf(L"\n\n");
